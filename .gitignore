@@ -1,0 +1,49 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+dist-electron/
+release/
+output/
+
+# 日志
+*.log
+build.log
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+
+# 临时文件
+workspace/
+.agents/
+.qoder/
+.trae/
+.codebuddy/
+
+# npm
+.npmrc
+
+# 内部文档
+doc/
+
+# 测试工具
+tools/
+
+# 其他
+skills-lock.json
+make-report.js
+copy-deps.bat
