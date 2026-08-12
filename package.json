@@ -1,6 +1,6 @@
 {
   "name": "du",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "杜有钱 - 简洁轻量的Windows待办应用",
   "main": "dist-electron/main.js",
   "scripts": {
