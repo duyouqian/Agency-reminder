@@ -73,6 +73,8 @@ du/
 │   │   └── theme.ts            # 主题管理（6套预设/背景图/透明度）
 │   ├── composables/            # 可组合逻辑
 │   │   └── useTodayButtonDrag.ts  # "回到今天"按钮拖拽
+│   ├── config/
+│   │   └── branding.ts         # 品牌配置（运行时读取 displayName 等）
 │   ├── utils/
 │   │   └── date.ts             # 日期工具（本地日期/中国节假日）
 │   ├── views/
@@ -83,8 +85,16 @@ du/
 │   ├── router.ts
 │   ├── style.css
 │   └── vite-env.d.ts
+├── branding.json               # 品牌配置（应用名称/描述/EXE文件名）
+├── electron-builder.config.cjs # Electron 打包配置
+├── favicon.ico                 # 应用图标
+├── index.html                  # HTML 入口
 ├── package.json
-└── vite.config.ts
+├── tsconfig.json
+├── tsconfig.node.json
+├── vite.config.ts
+├── .gitignore
+└── LICENSE
 ```
 
 ## 快速开始
