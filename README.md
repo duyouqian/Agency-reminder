@@ -4,11 +4,11 @@
 
 ## 应用截图
   主界面：
-> <img width="529" height="815" alt="image" src="https://github.com/user-attachments/assets/4cd93706-e7b4-4d33-9fda-781148a02a62" />
+> <img width="300" height="500" alt="image" src="https://github.com/user-attachments/assets/4cd93706-e7b4-4d33-9fda-781148a02a62" />
   支持自定义背景：
-> <img width="424" height="652" alt="image" src="https://github.com/user-attachments/assets/fba02b42-1548-45bd-8097-5432c7e8c0ed" />
+> <img width="200" height="350" alt="image" src="https://github.com/user-attachments/assets/fba02b42-1548-45bd-8097-5432c7e8c0ed" />
   图表统计:
-> <img width="434" height="629" alt="image" src="https://github.com/user-attachments/assets/91416142-e76b-483d-b750-0e6e16052463" />
+> <img width="250" height="360" alt="image" src="https://github.com/user-attachments/assets/91416142-e76b-483d-b750-0e6e16052463" />
 
 
 
