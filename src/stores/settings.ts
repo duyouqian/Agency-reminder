@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import type { OperationResult, ConfigWriteKey, StoreWriteKey, NotificationPosition } from '../../electron/ipc-types'
 
-export type NotificationPosition = 'top-right' | 'bottom-right' | 'top-left' | 'bottom-left'
+export type { NotificationPosition } from '../../electron/ipc-types'
 
 export const useSettingsStore = defineStore('settings', () => {
   const darkMode = ref(false)
@@ -31,7 +32,7 @@ export const useSettingsStore = defineStore('settings', () => {
     return error instanceof Error ? error.message : String(error)
   }
 
-  async function saveStoreValue(key: string, value: unknown): Promise<OperationResult> {
+  async function saveStoreValue(key: StoreWriteKey, value: unknown): Promise<OperationResult> {
     try {
       const result = await window.electronAPI.setStore(key, value)
       if (!result.success) {
@@ -49,17 +50,17 @@ export const useSettingsStore = defineStore('settings', () => {
   async function loadSettings(): Promise<OperationResult> {
     isReady.value = false
     try {
-      darkMode.value = await window.electronAPI.getStore('darkMode') || false
-      alwaysOnTop.value = await window.electronAPI.getStore('alwaysOnTop') || false
-      minimizeToTray.value = await window.electronAPI.getStore('minimizeToTray') ?? true
-      autoLaunch.value = await window.electronAPI.getStore('autoLaunch') || false
-      quickAddKey.value = await window.electronAPI.getConfig('quickAddKey') || 'Ctrl+Shift+T'
-      toggleMainKey.value = await window.electronAPI.getConfig('toggleMainKey') || 'Ctrl+Shift+F'
+      darkMode.value = (await window.electronAPI.getStore('darkMode')) as boolean || false
+      alwaysOnTop.value = (await window.electronAPI.getStore('alwaysOnTop')) as boolean || false
+      minimizeToTray.value = (await window.electronAPI.getStore('minimizeToTray')) as boolean ?? true
+      autoLaunch.value = (await window.electronAPI.getStore('autoLaunch')) as boolean || false
+      quickAddKey.value = (await window.electronAPI.getConfig('quickAddKey')) as string || 'Ctrl+Shift+T'
+      toggleMainKey.value = (await window.electronAPI.getConfig('toggleMainKey')) as string || 'Ctrl+Shift+F'
       language.value = 'zh-CN'
-      notificationPosition.value = await window.electronAPI.getStore('notificationPosition') || 'bottom-right'
+      notificationPosition.value = (await window.electronAPI.getStore('notificationPosition')) as NotificationPosition || 'bottom-right'
 
       // 加载周视图标题关键词搜索
-      filterSearchQuery.value = await window.electronAPI.getStore('filterSearchQuery') || ''
+      filterSearchQuery.value = (await window.electronAPI.getStore('filterSearchQuery')) as string || ''
 
       // Apply settings
       if (alwaysOnTop.value) {

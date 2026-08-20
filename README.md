@@ -1,8 +1,20 @@
 # 杜有钱
 
-简洁轻量的 Windows 待办事项管理应用
+功能完整的本地待办工具（Windows 桌面端）
+
+一个数据本地化、离线优先的待办应用：待办、提醒、优先级、标签等核心功能可靠好用，同时内置数据统计、多套主题、自定义背景与图标等完整能力。当前版本功能已冻结，增重功能留待后续分支精简。
+
+## 核心理念
+
+| 理念 | 含义 |
+|------|------|
+| **数据本地化** | 数据只存本地文件，不依赖服务器，不上传云端；迁移与备份是内置能力 |
+| **离线优先** | 运行时不联网，不接任何第三方 API；中国节假日数据由 `chinese-days` 随应用离线打包 |
+| **轻量克制** | 体积小、启动快、界面克制；功能虽完整，但不为堆砌而堆砌 |
+| **核心可靠** | 待办 / 提醒 / 优先级 / 标签必须可靠好用，数据层采用原子写入并有单元测试兜底 |
 
 ## 应用截图
+
   主界面：
 > <img width="300" height="500" alt="image" src="https://github.com/user-attachments/assets/4cd93706-e7b4-4d33-9fda-781148a02a62" />
   支持自定义背景：
@@ -10,11 +22,16 @@
   图表统计:
 > <img width="250" height="360" alt="image" src="https://github.com/user-attachments/assets/91416142-e76b-483d-b750-0e6e16052463" />
 
+## 已知问题与限制
 
+- **未签名的可执行文件**：便携版 EXE 未做代码签名，Windows SmartScreen 或部分杀毒软件可能提示“未知发布者”，需手动允许运行。
+- **无自动更新**：不接 `electron-updater`，升级需手动下载新版本 EXE 替换；升级前建议先备份数据目录。
+- **仅 Windows 便携单文件**：当前只发布 Windows portable 单文件，不提供安装包，也未适配 macOS / Linux。
+- **节假日数据不自动跨年**：`chinese-days` 只包含已公布并录入的年度安排，次年数据需维护者主动升级依赖（见下文「节假日数据维护」）。
 
 ## 功能特性
 
-- 📋 **待办管理**：创建、编辑、删除待办事项，支持 8 种预设颜色手动选择标记
+- 📋 **待办管理**：创建、编辑、删除待办事项，支持 8 种预设颜色标记
 - ⭐ **优先级标记**：P1/P2/P3 三级优先级（紧急/较高/普通），颜色标识；当天待办默认按 P1→P3 排列
 - 🔍 **标题搜索**：实时搜索当前日期的待办标题，搜索关键词自动保存
 - ✨ **流畅动画**：待办添加/删除平滑过渡动画，日期切换无闪烁，已完成任务即时显示
@@ -22,12 +39,12 @@
 - 🔔 **定时提醒**：设置精确到分钟的提醒时间，弹窗通知（支持四角定位）
 - 🏷️ **标签系统**：预设标签 + 自定义标签，分类管理待办
 - 📊 **数据总览**：日历视图总览面板，使用 `chinese-days` 提供中国节假日和调休标记，数据随应用离线打包
-- 📈 **数据统计**：ECharts 可视化（任务趋势、计划任务总数、分类占比），支持日/周/月维度
+- 📈 **数据统计**：ECharts 可视化（任务趋势、每日生产力、分类占比），支持日/周/月维度
 - 🎨 **主题系统**：6 套预设主题
 - 🖼️ **自定义背景**：上传背景图片，支持填充模式和透明度调节
 - 🌙 **暗黑模式**：完整的亮色 / 暗色主题支持
 - ⌨️ **全局快捷键**：快速添加待办、切换窗口显隐（可自定义）
-- 💻 **系统集成**：系统托盘（自定义图标）、窗口置顶、开机自启、关闭时隐藏到托盘
+- 💻 **系统集成**：系统托盘（自定义图标）、窗口置顶、开机自启、最小化到托盘
 - 📁 **自定义存储**：支持自定义数据存储目录，数据自动迁移
 - 🖼️ **自定义图标**：支持替换应用图标（exe 图标 + 托盘图标）
 
@@ -46,11 +63,12 @@
 ## 项目结构
 
 ```
-du/
+agency-reminder/
 ├── electron/                    # Electron 主进程
 │   ├── main.ts                 # 主进程入口（生命周期/Electron 交互/模块组装）
 │   ├── preload.ts              # 预加载脚本（IPC 桥接，支持主窗口和通知窗口分支）
 │   ├── types.ts                # 主进程与渲染进程共享类型（Todo/OperationResult 等）
+│   ├── ipc-types.ts            # IPC 边界统一类型（ElectronAPI/ConfigKey/StoreKey）
 │   ├── utils.ts                # 共享工具（日期格式化等）
 │   ├── ipc-security.ts         # IPC 安全白名单和配置校验
 │   ├── json-file-storage.ts    # JSON 原子写入、备份恢复
@@ -70,9 +88,23 @@ du/
 │   │   ├── OverviewModal.vue   # 待办总览弹窗
 │   │   ├── StatsModal.vue      # 数据统计弹窗（ECharts）
 │   │   ├── TagManageModal.vue  # 标签管理弹窗
-│   │   ├── ThemeModal.vue      # 主题/背景设置弹窗
-│   │   ├── SettingsModal.vue   # 应用设置弹窗
-│   │   └── Toast.vue           # 消息提示组件
+│   │   ├── ThemeModal.vue      # 主题/背景设置弹窗（容器，拆分见 theme/）
+│   │   ├── SettingsModal.vue   # 应用设置弹窗（容器，拆分见 settings/）
+│   │   ├── Toast.vue           # 消息提示组件
+│   │   ├── settings/           # 设置弹窗的功能区块子组件
+│   │   │   ├── SettingsSection.vue        # 区块外壳（图标+标题+插槽）
+│   │   │   ├── SettingToggle.vue          # 通用开关卡片
+│   │   │   ├── AppearanceSection.vue      # 外观（深色模式）
+│   │   │   ├── WindowSection.vue          # 窗口（置顶/托盘）
+│   │   │   ├── SystemSection.vue          # 系统（自启/通知位置）
+│   │   │   ├── ShortcutSection.vue        # 快捷键录制
+│   │   │   └── DataSection.vue            # 数据存储目录
+│   │   ├── main/               # 主页面子组件
+│   │   │   ├── AppTitleBar.vue            # 标题栏+窗口控制
+│   │   │   └── TodoListPanel.vue          # 进度条+搜索+列表+回到今天按钮
+│   │   └── theme/              # 主题弹窗子组件
+│   │       ├── PresetThemeGrid.vue        # 预设主题网格
+│   │       └── CustomBackgroundSection.vue # 自定义背景上传/比例/透明度
 │   ├── stores/                 # Pinia 状态管理
 │   │   ├── todo.ts             # 待办数据（增删改查/重复任务）
 │   │   ├── settings.ts         # 应用设置（快捷键/通知位置/暗黑模式）
@@ -84,13 +116,18 @@ du/
 │   ├── utils/
 │   │   └── date.ts             # 日期工具（本地日期/中国节假日）
 │   ├── views/
-│   │   ├── MainView.vue        # 主页面（标题栏/周视图/待办列表）
+│   │   ├── MainView.vue        # 主页面（组装标题栏/周视图/待办列表面板）
 │   │   └── NotificationView.vue # 提醒弹窗（独立窗口）
 │   ├── App.vue
 │   ├── main.ts
 │   ├── router.ts
 │   ├── style.css
 │   └── vite-env.d.ts
+├── tests/                      # Vitest 单元测试
+│   ├── data-store.test.ts      # 数据仓储层测试
+│   ├── date-calculation.test.ts # 日期与节假日计算测试
+│   ├── ipc-security.test.ts    # IPC 白名单与配置校验测试
+│   └── json-file-storage.test.ts # JSON 原子写入与备份恢复测试
 ├── branding.json               # 品牌配置（应用名称/描述/EXE文件名）
 ├── electron-builder.config.cjs # Electron 打包配置
 ├── favicon.ico                 # 应用图标
@@ -98,7 +135,8 @@ du/
 ├── package.json
 ├── tsconfig.json
 ├── tsconfig.node.json
-├── vite.config.ts
+├── vite.config.ts              # Vite 配置（含生产环境 CSP 注入插件）
+├── vitest.config.ts            # Vitest 测试配置
 ├── .gitignore
 └── LICENSE
 ```
@@ -124,6 +162,20 @@ npm run build
 ```
 
 构建完成后，可执行文件位于 `release/` 目录；文件名由根目录 `branding.json` 的 `artifactName` 控制，默认格式为 `杜有钱-版本号.exe`。
+
+### 运行测试
+
+```bash
+npm test
+```
+
+监听模式（开发时自动重跑）：
+
+```bash
+npm run test:watch
+```
+
+测试覆盖数据仓储层、JSON 原子写入、IPC 安全白名单和日期/节假日计算，共 4 个测试文件。
 
 ### 节假日数据维护
 
@@ -247,6 +299,7 @@ npm run build
 
 | 图标 | 功能 |
 |------|------|
+| 📅 | 周视图 |
 | 📊 | 待办总览 |
 | 📈 | 数据统计 |
 | 🏷️ | 标签管理 |
@@ -255,7 +308,7 @@ npm run build
 
 ### 添加待办
 
-1. 点击列表顶部「添加待办」按钮，或按全局快捷键
+1. 点击列表底部「添加待办」按钮，或按全局快捷键
 2. 填写标题，选择优先级（P1-P3）、颜色、标签、提醒时间、重复周期（均可选）
 3. 点击「添加」
 
@@ -288,7 +341,7 @@ npm run build
 
 ### 设置
 
-- 窗口置顶 / 关闭时隐藏到托盘 / 开机自启
+- 窗口置顶 / 最小化到托盘 / 开机自启
 - 自定义全局快捷键（支持录制组合键）
 - 自定义数据存储目录（支持数据迁移）
 - 通知弹窗位置（四角可选）
