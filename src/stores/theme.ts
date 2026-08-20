@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
+import type { OperationResult, StoreReadKey, StoreWriteKey } from '../../electron/ipc-types'
 
 export interface Theme {
   id: string
@@ -156,7 +157,7 @@ export const useThemeStore = defineStore('theme', () => {
   }
 
   async function setTheme(themeId: string): Promise<OperationResult> {
-    const result = await window.electronAPI.setStore('currentTheme', themeId)
+    const result = await window.electronAPI.setStore('currentTheme' as StoreWriteKey, themeId)
     if (!result.success) return result
     currentThemeId.value = themeId
     applyTheme()
@@ -169,7 +170,7 @@ export const useThemeStore = defineStore('theme', () => {
   }
 
   async function setBgSize(size: string): Promise<OperationResult> {
-    const result = await window.electronAPI.setStore('bgSize', size)
+    const result = await window.electronAPI.setStore('bgSize' as StoreWriteKey, size)
     if (!result.success) return result
     bgSize.value = size
     applyTheme()
@@ -177,7 +178,7 @@ export const useThemeStore = defineStore('theme', () => {
   }
 
   async function setUiTransparency(transparency: number): Promise<OperationResult> {
-    const result = await window.electronAPI.setStore('uiTransparency', transparency)
+    const result = await window.electronAPI.setStore('uiTransparency' as StoreWriteKey, transparency)
     if (!result.success) return result
     uiTransparency.value = transparency
     applyTheme()
@@ -195,29 +196,29 @@ export const useThemeStore = defineStore('theme', () => {
   }
 
   async function loadTheme() {
-    const savedTheme = await window.electronAPI.getStore('currentTheme')
+    const savedTheme = await window.electronAPI.getStore('currentTheme' as StoreReadKey)
     const savedBgImage = await window.electronAPI.getBgImage()
-    const savedBgSize = await window.electronAPI.getStore('bgSize')
-    const savedUiTransparency = await window.electronAPI.getStore('uiTransparency')
+    const savedBgSize = await window.electronAPI.getStore('bgSize' as StoreReadKey)
+    const savedUiTransparency = await window.electronAPI.getStore('uiTransparency' as StoreReadKey)
     const legacyBgOpacity = savedUiTransparency === undefined || savedUiTransparency === null
-      ? await window.electronAPI.getStore('bgOpacity')
+      ? await window.electronAPI.getStore('bgOpacity' as StoreReadKey)
       : null
     
     if (savedTheme) {
-      currentThemeId.value = savedTheme
+      currentThemeId.value = savedTheme as string
     }
     if (savedBgImage) {
       customBgImage.value = savedBgImage
     }
     if (savedBgSize) {
-      bgSize.value = savedBgSize
+      bgSize.value = savedBgSize as string
     }
     const savedTransparency = savedUiTransparency ?? legacyBgOpacity
     if (typeof savedTransparency === 'number') {
       uiTransparency.value = savedTransparency
       if ((savedUiTransparency === undefined || savedUiTransparency === null) && legacyBgOpacity !== null) {
         // 兼容旧配置：只迁移数值，不改变现有透明度计算语义。
-        await window.electronAPI.setStore('uiTransparency', legacyBgOpacity)
+        await window.electronAPI.setStore('uiTransparency' as StoreWriteKey, legacyBgOpacity)
       }
     }
     

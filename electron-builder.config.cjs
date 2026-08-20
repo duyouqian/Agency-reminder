@@ -1,7 +1,7 @@
 const branding = require('./branding.json')
 
 module.exports = {
-  appId: 'com.du.remind',
+  appId: 'com.duyouqian.agency-reminder',
   productName: branding.displayName,
   icon: 'favicon.ico',
   directories: {

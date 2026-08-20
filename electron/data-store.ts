@@ -22,7 +22,7 @@ interface DataStoreDependencies {
   logError: (...args: unknown[]) => void
 }
 
-const BACKUP_COUNT = 3
+const BACKUP_COUNT = 1
 const DEFAULT_TAGS = ['需求', 'Bug', '临时活']
 
 function getErrorMessage(error: unknown): string {
@@ -91,7 +91,7 @@ export function validateTodos(value: unknown): Todo[] {
   })
 }
 
-function validateTags(value: unknown): string[] {
+export function validateTags(value: unknown): string[] {
   if (!Array.isArray(value) || value.some(tag => typeof tag !== 'string')) {
     throw new Error('标签数据必须是字符串数组')
   }

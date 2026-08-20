@@ -29,6 +29,7 @@ Thumbs.db
 
 # 临时文件
 workspace/
+.zcode/
 .agents/
 .qoder/
 .trae/
@@ -37,11 +38,8 @@ workspace/
 # npm
 .npmrc
 
-# 内部文档
+# 项目内部文档（不入库）
 doc/
-
-# 测试工具
-tools/
 
 # 其他
 skills-lock.json

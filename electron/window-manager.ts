@@ -1,7 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron'
 import { pathToFileURL } from 'url'
 import type { IpcMainInvokeEvent } from 'electron'
-import { captureR05WindowEvidence } from './utils'
 import { appBranding } from '../src/config/branding'
 
 interface MainWindowManagerOptions {
@@ -113,17 +112,6 @@ export function createMainWindow(options: MainWindowManagerOptions): BrowserWind
       console.error(`[主窗口加载失败] ${errorCode} ${errorDescription} ${validatedURL}`)
     }
   })
-  mainWindow.webContents.on('did-finish-load', () => {
-    void captureR05WindowEvidence(mainWindow, 'r05-main')
-  })
-  if (process.env.R05_UI_REPORT_DIR) {
-    const evidenceTimer = setInterval(() => {
-      void captureR05WindowEvidence(mainWindow, 'r05-main-live')
-    }, 1000)
-    mainWindow.on('closed', () => {
-      clearInterval(evidenceTimer)
-    })
-  }
   mainWindow.webContents.on('will-navigate', (event, targetUrl) => {
     let allowed = false
     try {
@@ -143,9 +131,7 @@ export function createMainWindow(options: MainWindowManagerOptions): BrowserWind
 
   if (options.isDev) {
     void mainWindow.loadURL(options.developmentUrl)
-    if (process.env.R05_UI_AUTOMATION !== '1') {
-      mainWindow.webContents.openDevTools({ mode: 'detach' })
-    }
+    mainWindow.webContents.openDevTools({ mode: 'detach' })
   } else {
     void mainWindow.loadFile(options.productionIndexPath)
   }

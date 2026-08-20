@@ -52,6 +52,18 @@ export default defineConfig({
       transformIndexHtml(html) {
         return html.replace('%APP_DISPLAY_NAME%', escapeHtml(appBranding.displayName))
       }
+    },
+    {
+      // 生产包 CSP 不放行 localhost：开发期 HMR 需要，发布包只保留 'self'
+      name: 'production-csp',
+      apply: 'build',
+      transformIndexHtml(html) {
+        return html.replace(
+          /(<meta[^>]*Content-Security-Policy[^>]*content=")([^"]*)(")/,
+          (_match, prefix: string, policy: string, suffix: string) =>
+            prefix + policy.replace(/\s*http:\/\/localhost:\*/g, '').trim() + suffix
+        )
+      }
     }
   ],
   resolve: {

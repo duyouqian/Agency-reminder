@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed, onMounted } from 'vue'
 import type { Todo } from '../stores/todo'
-import { COLORS } from '../stores/todo'
+import { getRandomColor } from '../stores/todo'
 
 const props = defineProps<{
   editingTodo?: Todo | null
@@ -51,7 +51,7 @@ watch(() => props.editingTodo, (todo) => {
 
 function resetForm() {
   title.value = ''
-  color.value = COLORS[0]
+  color.value = getRandomColor()
   tag.value = ''
   remindTime.value = ''
   repeat.value = null
@@ -119,22 +119,6 @@ onMounted(async () => {
           </div>
         </div>
         
-        <div class="form-group">
-          <label class="form-label">颜色标记</label>
-          <div class="color-options">
-            <button
-              v-for="c in COLORS"
-              :key="c"
-              type="button"
-              class="color-btn"
-              :class="{ active: color === c }"
-              :style="{ backgroundColor: c }"
-              @click="color = c"
-              :title="c"
-            ></button>
-          </div>
-        </div>
-
         <div class="form-group">
           <label class="form-label">分类标签</label>
           <div class="tag-options">
@@ -271,29 +255,6 @@ onMounted(async () => {
 
 .priority-btn.active {
   color: white;
-}
-
-.color-options {
-  display: flex;
-  gap: 8px;
-}
-
-.color-btn {
-  width: 28px;
-  height: 28px;
-  border: 3px solid transparent;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: transform 0.15s, border-color 0.15s;
-}
-
-.color-btn:hover {
-  transform: scale(1.15);
-}
-
-.color-btn.active {
-  border-color: var(--text-color);
-  transform: scale(1.1);
 }
 
 .form-actions {

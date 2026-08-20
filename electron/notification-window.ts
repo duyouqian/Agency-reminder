@@ -2,7 +2,6 @@ import { BrowserWindow, ipcMain, screen } from 'electron'
 import { pathToFileURL } from 'url'
 import type { IpcMainInvokeEvent, Rectangle } from 'electron'
 import type { NotificationPosition } from './reminder-scheduler'
-import { captureR05WindowEvidence } from './utils'
 
 export interface NotificationWindowResult {
   success: boolean
@@ -125,7 +124,6 @@ export function createNotificationWindow(options: NotificationWindowOptions) {
       }
 
       notificationWindow.webContents.send('notification-data', { title, body })
-      void captureR05WindowEvidence(notificationWindow, 'r05-notification')
       autoCloseTimer = setTimeout(() => {
         if (notificationWindow && !notificationWindow.isDestroyed()) {
           notificationWindow.close()

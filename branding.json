@@ -1,6 +1,6 @@
 {
   "displayName": "杜有钱",
-  "description": "简洁轻量的 Windows 待办事项管理应用",
+  "description": "功能完整的本地待办工具",
   "notificationTitle": "待办提醒",
   "artifactName": "${productName}-${version}.${ext}"
 }

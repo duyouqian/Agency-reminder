@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, toRaw } from 'vue'
 import { getLocalDateString } from '../utils/date'
 import type { Todo } from '../../electron/types'
 
@@ -73,8 +73,8 @@ export const useTodoStore = defineStore('todo', () => {
   async function saveTodos(): Promise<boolean> {
     hasUnsavedChanges.value = true
     try {
-      // 转换为普通数组，避免 Vue 响应式对象无法被克隆的问题
-      const todosToSave = JSON.parse(JSON.stringify(todos.value))
+      // toRaw() 返回原始对象，去除 Vue 响应式代理，避免循环引用且无需深拷贝
+      const todosToSave = toRaw(todos.value)
       const result = await window.electronAPI.saveTodos(todosToSave)
       if (!result.success) {
         persistenceError.value = result.error || '待办保存失败'

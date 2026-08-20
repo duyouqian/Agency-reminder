@@ -1,9 +1,10 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import type { Todo } from './types'
+import type { ElectronAPI, NotificationElectronAPI } from './ipc-types'
 
 const isNotificationWindow = process.argv.includes('--notification-window')
 
-const notificationAPI = {
+const notificationAPI: NotificationElectronAPI = {
   // 通知窗口只允许接收主进程推送的通知数据
   onNotificationData: (callback: (data: { title: string; body: string }) => void) => {
     ipcRenderer.on('notification-data', (_, data) => {
@@ -17,14 +18,14 @@ const notificationAPI = {
   }
 }
 
-const mainAPI = {
+const mainAPI: ElectronAPI = {
   // Store
   getStore: (key: string) => ipcRenderer.invoke('get-store', key),
-  setStore: (key: string, value: any) => ipcRenderer.invoke('set-store', key, value),
+  setStore: (key: string, value: unknown) => ipcRenderer.invoke('set-store', key, value),
   
   // Config (存储路径等)
   getConfig: (key: string) => ipcRenderer.invoke('get-config', key),
-  setConfig: (key: string, value: any) => ipcRenderer.invoke('set-config', key, value),
+  setConfig: (key: string, value: unknown) => ipcRenderer.invoke('set-config', key, value),
   
   // Todos
   getAllTodos: () => ipcRenderer.invoke('get-all-todos'),

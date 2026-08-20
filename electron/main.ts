@@ -14,11 +14,18 @@ import { registerBackgroundIpcHandlers } from './background-ipc'
 import { registerExternalLinkIpcHandler } from './external-link-ipc'
 import { appBranding } from '../src/config/branding'
 
-// 仅供 R-05 真实窗口自动化验收使用；正常启动和发布包不会进入该分支。
-if (process.env.R05_UI_AUTOMATION === '1') {
-  app.commandLine.appendSwitch('force-renderer-accessibility')
-  app.disableHardwareAcceleration()
+// 单实例锁：必须在 app.whenReady() 之前调用，防止生产环境多实例并发写入覆盖数据
+const gotLock = app.requestSingleInstanceLock()
+if (!gotLock) {
+  app.quit()
+  process.exit(0)
 }
+app.on('second-instance', () => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore()
+    mainWindow.focus()
+  }
+})
 
 // 条件日志：仅开发环境输出
 function log(...args: unknown[]) {
@@ -220,9 +227,6 @@ function createTray() {
 }
 
 app.whenReady().then(async () => {
-  if (process.env.R05_UI_AUTOMATION === '1') {
-    app.setAccessibilitySupportEnabled(true)
-  }
   // 加载版本号
   loadAppVersion()
   
