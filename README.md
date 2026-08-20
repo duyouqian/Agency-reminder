@@ -15,7 +15,12 @@
 
 ## 应用截图
 
-> 截图待补充
+  主界面：
+> <img width="300" height="500" alt="image" src="https://github.com/user-attachments/assets/4cd93706-e7b4-4d33-9fda-781148a02a62" />
+  支持自定义背景：
+> <img width="200" height="350" alt="image" src="https://github.com/user-attachments/assets/fba02b42-1548-45bd-8097-5432c7e8c0ed" />
+  图表统计:
+> <img width="250" height="360" alt="image" src="https://github.com/user-attachments/assets/91416142-e76b-483d-b750-0e6e16052463" />
 
 ## 已知问题与限制
 
@@ -106,6 +111,8 @@ agency-reminder/
 │   │   └── theme.ts            # 主题管理（6套预设/背景图/透明度）
 │   ├── composables/            # 可组合逻辑
 │   │   └── useTodayButtonDrag.ts  # "回到今天"按钮拖拽
+│   ├── config/
+│   │   └── branding.ts         # 品牌配置（运行时读取 displayName 等）
 │   ├── utils/
 │   │   └── date.ts             # 日期工具（本地日期/中国节假日）
 │   ├── views/
@@ -116,8 +123,22 @@ agency-reminder/
 │   ├── router.ts
 │   ├── style.css
 │   └── vite-env.d.ts
+├── tests/                      # Vitest 单元测试
+│   ├── data-store.test.ts      # 数据仓储层测试
+│   ├── date-calculation.test.ts # 日期与节假日计算测试
+│   ├── ipc-security.test.ts    # IPC 白名单与配置校验测试
+│   └── json-file-storage.test.ts # JSON 原子写入与备份恢复测试
+├── branding.json               # 品牌配置（应用名称/描述/EXE文件名）
+├── electron-builder.config.cjs # Electron 打包配置
+├── favicon.ico                 # 应用图标
+├── index.html                  # HTML 入口
 ├── package.json
-└── vite.config.ts
+├── tsconfig.json
+├── tsconfig.node.json
+├── vite.config.ts              # Vite 配置（含生产环境 CSP 注入插件）
+├── vitest.config.ts            # Vitest 测试配置
+├── .gitignore
+└── LICENSE
 ```
 
 ## 快速开始
@@ -141,6 +162,20 @@ npm run build
 ```
 
 构建完成后，可执行文件位于 `release/` 目录；文件名由根目录 `branding.json` 的 `artifactName` 控制，默认格式为 `杜有钱-版本号.exe`。
+
+### 运行测试
+
+```bash
+npm test
+```
+
+监听模式（开发时自动重跑）：
+
+```bash
+npm run test:watch
+```
+
+测试覆盖数据仓储层、JSON 原子写入、IPC 安全白名单和日期/节假日计算，共 4 个测试文件。
 
 ### 节假日数据维护
 
@@ -254,7 +289,7 @@ npm run build
 
 #### 不要修改的字段
 
-`appId` 固定为 `com.duyouqian.agency-reminder`，不在 `branding.json` 中配置。不要为了修改名称而变更它；该值关系到 Windows 应用身份、默认数据目录和后续升级兼容性。
+`appId` 固定为 `com.du.remind`，不在 `branding.json` 中配置。不要为了修改名称而变更它；该值关系到 Windows 应用身份、默认数据目录和后续升级兼容性。
 
 > 如果修改了 `branding.json` 却仍看到旧名称，说明运行的是旧 EXE。删除或移走旧 `release/` 产物后重新构建，并确认打开的是新生成的文件。
 
